@@ -1,0 +1,43 @@
+name: ToastTPA 1.21.11 build
+
+on:
+  push:
+    branches:
+      - build/toasttpa-1.21.11
+    paths:
+      - "toasttpa/**"
+      - ".github/workflows/toasttpa-build.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out sources
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "9.2.1"
+
+      - name: Build remapped Fabric JAR
+        working-directory: toasttpa
+        run: gradle --no-daemon clean build
+
+      - name: Upload only the mod JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: ToastTPA-1.21.11
+          path: toasttpa/build/libs/toasttpa-1.0.0.jar
+          if-no-files-found: error
+          retention-days: 7
