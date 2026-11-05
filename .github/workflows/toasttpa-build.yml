@@ -5,6 +5,10 @@ on:
     paths:
       - "toasttpa/**"
       - ".github/workflows/toasttpa-build.yml"
+  pull_request:
+    paths:
+      - "toasttpa/**"
+      - ".github/workflows/toasttpa-build.yml"
 
 permissions:
   contents: read
