@@ -1,5 +1,26 @@
 {
   "key.category.toasttpa.main": "ToastTPA",
   "key.toasttpa.open_menu": "Open ToastTPA menu",
-  "key.toasttpa.quick_tpa": "Quick TPA to selected friend"
+  "key.toasttpa.quick_tpa": "Quick TPA to active friend",
+  "toasttpa.subtitle": "FRIENDS  /  QUICK TPA",
+  "toasttpa.target": "ACTIVE FRIEND",
+  "toasttpa.no_target": "No friend selected",
+  "toasttpa.quick_tpa": "TPA NOW",
+  "toasttpa.add_placeholder": "Enter player name ...",
+  "toasttpa.add": "+ ADD FRIEND",
+  "toasttpa.add_section": "ADD A FRIEND",
+  "toasttpa.friends": "SAVED FRIENDS",
+  "toasttpa.empty": "No friends saved yet.",
+  "toasttpa.select": "SELECT",
+  "toasttpa.active": "ACTIVE",
+  "toasttpa.tpa": "TPA",
+  "toasttpa.close": "CLOSE",
+  "toasttpa.page": "Page %s / %s",
+  "toasttpa.hotkeys": "RIGHT SHIFT  MENU     •     Ä  QUICK TPA",
+  "toasttpa.message.saved": "%s has been saved.",
+  "toasttpa.message.invalid": "Invalid name, duplicate, or friend list is full.",
+  "toasttpa.message.no_friend": "Select a friend first.",
+  "toasttpa.message.invalid_name": "Invalid player name.",
+  "toasttpa.message.not_connected": "You are not connected to a server.",
+  "toasttpa.message.sent": "TPA request sent to %s."
 }
