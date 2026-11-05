@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "toasttpa",
+  "version": "${version}",
+  "name": "ToastTPA",
+  "description": "Friend list and instant TPA hotkey for Minecraft servers that support /tpa.",
+  "authors": ["Toastomat"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "dev.toastomat.toasttpa.ToastTpaClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.0",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
