@@ -22,7 +22,7 @@ public final class ToastTpaClient implements ClientModInitializer {
 
         KeyBinding.Category category = KeyBinding.Category.create(Identifier.of(MOD_ID, "main"));
 
-        // On a German QWERTZ keyboard, this physical key is Ä.
+        // This physical key maps to Ä on a German QWERTZ keyboard.
         quickTpaKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.toasttpa.quick_tpa",
                 InputUtil.Type.KEYSYM,
@@ -39,7 +39,9 @@ public final class ToastTpaClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openMenuKey.wasPressed()) {
-                if (client.currentScreen == null) client.setScreen(new ToastTpaScreen());
+                if (client.currentScreen == null) {
+                    client.setScreen(new ToastTpaScreen());
+                }
             }
 
             while (quickTpaKey.wasPressed()) {
@@ -48,7 +50,7 @@ public final class ToastTpaClient implements ClientModInitializer {
                 String target = ToastTpaConfig.getSelectedFriend();
                 if (target == null || target.isBlank()) {
                     client.setScreen(new ToastTpaScreen());
-                    notifyPlayer(client, "Wähle zuerst einen Freund im ToastTPA-Menü aus.");
+                    notifyPlayer(Text.translatable("toasttpa.message.no_friend"));
                 } else {
                     sendTpa(client, target);
                 }
@@ -58,22 +60,26 @@ public final class ToastTpaClient implements ClientModInitializer {
 
     public static void sendTpa(MinecraftClient client, String playerName) {
         if (!ToastTpaConfig.isValidPlayerName(playerName)) {
-            notifyPlayer(client, "Ungültiger Spielername.");
+            notifyPlayer(Text.translatable("toasttpa.message.invalid_name"));
             return;
         }
         if (client.getNetworkHandler() == null || client.player == null) {
-            notifyPlayer(client, "Du bist gerade auf keinem Server.");
+            notifyPlayer(Text.translatable("toasttpa.message.not_connected"));
             return;
         }
 
         // Sends the normal server command; the other player must accept.
         client.getNetworkHandler().sendChatCommand("tpa " + playerName);
-        notifyPlayer(client, "TPA-Anfrage an " + playerName + " gesendet.");
+        notifyPlayer(Text.translatable("toasttpa.message.sent", playerName));
     }
 
-    public static void notifyPlayer(MinecraftClient client, String message) {
+    public static void notifyPlayer(Text message) {
+        MinecraftClient client = MinecraftClient.getInstance();
         if (client.player != null) {
-            client.player.sendMessage(Text.literal("§6[ToastTPA] §f" + message), false);
+            client.player.sendMessage(
+                    Text.literal("§6[ToastTPA] §f").append(message),
+                    false
+            );
         }
     }
 }
