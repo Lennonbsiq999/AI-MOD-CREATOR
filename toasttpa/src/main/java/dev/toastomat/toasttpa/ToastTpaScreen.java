@@ -198,16 +198,13 @@ public final class ToastTpaScreen extends Screen {
         context.drawTextWithShadow(textRenderer, Text.translatable("toasttpa.subtitle"),
                 x + 18, y + 23, MUTED);
 
-        String target = selected == null || selected.isBlank()
-                ? textRenderer.trimToWidth(Text.translatable("toasttpa.no_target"), 150).getString()
-                : selected;
+        Text target = selected == null || selected.isBlank()
+                ? Text.translatable("toasttpa.no_target")
+                : Text.literal(selected);
         context.drawTextWithShadow(textRenderer, Text.translatable("toasttpa.target"),
                 x + 22, y + 47, MUTED);
-        context.drawTextWithShadow(textRenderer, Text.literal(target),
+        context.drawTextWithShadow(textRenderer, target,
                 x + 22, y + 57, TEXT);
-
-        context.drawTextWithShadow(textRenderer, Text.translatable("toasttpa.add_section"),
-                x + 18, y + 61, MUTED);
         context.drawTextWithShadow(textRenderer, Text.translatable("toasttpa.friends"),
                 x + 18, y + 100, ACCENT);
 
