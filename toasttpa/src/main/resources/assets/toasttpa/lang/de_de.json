@@ -1,5 +1,26 @@
 {
   "key.category.toasttpa.main": "ToastTPA",
   "key.toasttpa.open_menu": "ToastTPA-Menü öffnen",
-  "key.toasttpa.quick_tpa": "Schnell-TPA an ausgewählten Freund"
+  "key.toasttpa.quick_tpa": "Schnell-TPA an aktiven Freund",
+  "toasttpa.subtitle": "FREUNDE  /  SCHNELL-TPA",
+  "toasttpa.target": "AKTIVER FREUND",
+  "toasttpa.no_target": "Kein Freund ausgewählt",
+  "toasttpa.quick_tpa": "TPA JETZT",
+  "toasttpa.add_placeholder": "Spielername eingeben ...",
+  "toasttpa.add": "+ HINZUFÜGEN",
+  "toasttpa.add_section": "FREUND HINZUFÜGEN",
+  "toasttpa.friends": "GESPEICHERTE FREUNDE",
+  "toasttpa.empty": "Noch keine Freunde gespeichert.",
+  "toasttpa.select": "AUSWÄHLEN",
+  "toasttpa.active": "AKTIV",
+  "toasttpa.tpa": "TPA",
+  "toasttpa.close": "SCHLIESSEN",
+  "toasttpa.page": "Seite %s / %s",
+  "toasttpa.hotkeys": "RECHTS-SHIFT  MENÜ     •     Ä  SCHNELL-TPA",
+  "toasttpa.message.saved": "%s wurde gespeichert.",
+  "toasttpa.message.invalid": "Ungültiger Name, bereits gespeichert oder Liste voll.",
+  "toasttpa.message.no_friend": "Wähle zuerst einen Freund aus.",
+  "toasttpa.message.invalid_name": "Ungültiger Spielername.",
+  "toasttpa.message.not_connected": "Du bist gerade auf keinem Server.",
+  "toasttpa.message.sent": "TPA-Anfrage an %s gesendet."
 }
