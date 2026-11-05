@@ -10,15 +10,17 @@ import net.minecraft.text.Text;
 import java.util.List;
 
 public final class ToastTpaScreen extends Screen {
-    private static final int ACCENT = 0xFFFF8A32;
-    private static final int PANEL = 0xF10D111A;
-    private static final int INNER = 0xFF151B27;
-    private static final int CARD = 0xFF1C2635;
-    private static final int TEXT = 0xFFF2F5FA;
-    private static final int MUTED = 0xFF9BA9BC;
+    private static final int ACCENT = 0xFFFF913D;
+    private static final int PANEL = 0xF10D121B;
+    private static final int HEADER = 0xFF192231;
+    private static final int SURFACE = 0xFF141C28;
+    private static final int ROW = 0xFF202B3A;
+    private static final int ROW_ACTIVE = 0xFF263A3B;
+    private static final int TEXT = 0xFFF3F5F8;
+    private static final int MUTED = 0xFF95A3B5;
 
     private static final int ROW_HEIGHT = 22;
-    private static final int ROW_GAP = 1;
+    private static final int ROW_GAP = 2;
 
     private TextFieldWidget playerNameField;
     private int panelX;
@@ -26,7 +28,7 @@ public final class ToastTpaScreen extends Screen {
     private int panelWidth;
     private int panelHeight;
     private int rowsTop;
-    private int pageY;
+    private int footerY;
     private int visibleRows;
     private int page;
 
@@ -36,41 +38,52 @@ public final class ToastTpaScreen extends Screen {
 
     @Override
     protected void init() {
-        // Keep the UI inside the actual scaled Minecraft window.
         panelWidth = Math.max(300, Math.min(560, this.width - 12));
-        panelHeight = Math.max(190, Math.min(250, this.height - 8));
+        panelHeight = Math.max(160, Math.min(260, this.height - 12));
         panelX = (this.width - panelWidth) / 2;
         panelY = (this.height - panelHeight) / 2;
 
-        rowsTop = 110;
-        pageY = panelHeight - 55;
-        visibleRows = Math.max(1, Math.min(8,
-                (pageY - rowsTop - 5) / (ROW_HEIGHT + ROW_GAP)));
+        rowsTop = 112;
+        footerY = panelHeight - 34;
+        visibleRows = Math.max(1, Math.min(5,
+                (footerY - rowsTop - 6) / (ROW_HEIGHT + ROW_GAP)));
 
-        int fieldWidth = Math.max(120, panelWidth - 154);
+        int addButtonWidth = 100;
+        int fieldWidth = Math.max(110, panelWidth - 154);
         playerNameField = new TextFieldWidget(
-                this.textRenderer, panelX + 18, panelY + 68, fieldWidth, 22,
-                Text.literal("Minecraft-Spielername")
+                this.textRenderer,
+                panelX + 18,
+                panelY + 72,
+                fieldWidth,
+                22,
+                Text.translatable("toasttpa.add_placeholder")
         );
         playerNameField.setMaxLength(16);
         playerNameField.setTextPredicate(value -> value.matches("[A-Za-z0-9_]{0,16}"));
-        playerNameField.setPlaceholder(Text.literal("Spielername"));
+        playerNameField.setPlaceholder(Text.translatable("toasttpa.add_placeholder"));
+        playerNameField.setDrawsBackground(false);
         addDrawableChild(playerNameField);
 
-        addDrawableChild(ButtonWidget.builder(Text.literal("+ HINZUFÜGEN"), button -> addFriend())
-                .dimensions(panelX + panelWidth - 128, panelY + 68, 110, 22).build());
+        addDrawableChild(ButtonWidget.builder(Text.translatable("toasttpa.add"), button -> addFriend())
+                .dimensions(panelX + panelWidth - addButtonWidth - 18, panelY + 72, addButtonWidth, 22)
+                .build());
+
+        addDrawableChild(ButtonWidget.builder(Text.translatable("toasttpa.quick_tpa"), button -> sendSelectedFriend())
+                .dimensions(panelX + panelWidth - 112, panelY + 43, 94, 22)
+                .build());
 
         rebuildFriendRows();
 
         addDrawableChild(ButtonWidget.builder(Text.literal("‹"), button -> changePage(-1))
-                .dimensions(panelX + 18, panelY + pageY, 28, 20).build());
+                .dimensions(panelX + 18, panelY + footerY, 26, 20)
+                .build());
         addDrawableChild(ButtonWidget.builder(Text.literal("›"), button -> changePage(1))
-                .dimensions(panelX + 52, panelY + pageY, 28, 20).build());
+                .dimensions(panelX + 50, panelY + footerY, 26, 20)
+                .build());
 
-        addDrawableChild(ButtonWidget.builder(Text.literal("SCHNELL-TPA"), button -> sendSelectedFriend())
-                .dimensions(panelX + panelWidth - 224, panelY + panelHeight - 30, 108, 22).build());
-        addDrawableChild(ButtonWidget.builder(Text.literal("SCHLIESSEN"), button -> closeScreen())
-                .dimensions(panelX + panelWidth - 108, panelY + panelHeight - 30, 90, 22).build());
+        addDrawableChild(ButtonWidget.builder(Text.translatable("toasttpa.close"), button -> closeScreen())
+                .dimensions(panelX + panelWidth - 108, panelY + footerY, 90, 20)
+                .build());
     }
 
     private void rebuildFriendRows() {
@@ -83,24 +96,25 @@ public final class ToastTpaScreen extends Screen {
             int y = panelY + rowsTop + (index - start) * (ROW_HEIGHT + ROW_GAP);
 
             addDrawableChild(ButtonWidget.builder(
-                    Text.literal(friend.equalsIgnoreCase(ToastTpaConfig.getSelectedFriend())
-                            ? "★ AUSGEWÄHLT" : "AUSWÄHLEN"),
+                    Text.translatable(friend.equalsIgnoreCase(ToastTpaConfig.getSelectedFriend())
+                            ? "toasttpa.active" : "toasttpa.select"),
                     button -> {
                         ToastTpaConfig.selectFriend(friend);
                         refreshWidgets();
                     })
-                    .dimensions(panelX + panelWidth - 224, y, 104, 20).build());
+                    .dimensions(panelX + panelWidth - 220, y, 94, 20)
+                    .build());
 
-            addDrawableChild(ButtonWidget.builder(Text.literal("TPA"), button -> {
+            addDrawableChild(ButtonWidget.builder(Text.translatable("toasttpa.tpa"), button -> {
                 ToastTpaConfig.selectFriend(friend);
                 ToastTpaClient.sendTpa(MinecraftClient.getInstance(), friend);
-            }).dimensions(panelX + panelWidth - 112, y, 54, 20).build());
+            }).dimensions(panelX + panelWidth - 120, y, 48, 20).build());
 
             addDrawableChild(ButtonWidget.builder(Text.literal("×"), button -> {
                 ToastTpaConfig.removeFriend(friend);
                 page = Math.min(page, maxPage());
                 refreshWidgets();
-            }).dimensions(panelX + panelWidth - 50, y, 32, 20).build());
+            }).dimensions(panelX + panelWidth - 64, y, 46, 20).build());
         }
     }
 
@@ -108,18 +122,17 @@ public final class ToastTpaScreen extends Screen {
         String name = playerNameField.getText().trim();
         if (ToastTpaConfig.addFriend(name)) {
             page = maxPage();
-            ToastTpaClient.notifyPlayer(MinecraftClient.getInstance(), name + " gespeichert.");
+            ToastTpaClient.notifyPlayer(Text.translatable("toasttpa.message.saved", name));
             refreshWidgets();
         } else {
-            ToastTpaClient.notifyPlayer(MinecraftClient.getInstance(),
-                    "Name ungültig, bereits gespeichert oder Freundeliste voll.");
+            ToastTpaClient.notifyPlayer(Text.translatable("toasttpa.message.invalid"));
         }
     }
 
     private void sendSelectedFriend() {
         String selected = ToastTpaConfig.getSelectedFriend();
         if (selected == null || selected.isBlank()) {
-            ToastTpaClient.notifyPlayer(MinecraftClient.getInstance(), "Wähle zuerst einen Freund aus.");
+            ToastTpaClient.notifyPlayer(Text.translatable("toasttpa.message.no_friend"));
             return;
         }
         ToastTpaClient.sendTpa(MinecraftClient.getInstance(), selected);
@@ -142,81 +155,80 @@ public final class ToastTpaScreen extends Screen {
         MinecraftClient.getInstance().setScreen(null);
     }
 
-    /**
-     * Screen.render() calls this once before drawing child widgets.
-     * Do not invoke the vanilla blurred background: on 1.21.11 the
-     * old implementation called it here and then called it a second time
-     * manually from render(), causing "Can only blur once per frame".
-     */
     @Override
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-        // Intentionally empty. The dim overlay and panel are drawn in render().
+        // A custom dim layer is drawn below. Avoid Minecraft's blur pipeline:
+        // calling it twice in one frame crashes on Minecraft 1.21.11.
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        // No vanilla blur. A simple translucent overlay is stable with Sodium
-        // and other screen/rendering mods.
-        context.fill(0, 0, this.width, this.height, 0x99000000);
+        context.fill(0, 0, this.width, this.height, 0x99070A10);
 
         int x = panelX;
         int y = panelY;
+        int right = x + panelWidth;
+        int bottom = y + panelHeight;
 
-        context.fill(x - 1, y - 1, x + panelWidth + 1, y + panelHeight + 1, 0xAAFF8A32);
-        context.fill(x, y, x + panelWidth, y + panelHeight, PANEL);
-        context.fill(x + 2, y + 2, x + panelWidth - 2, y + 38, 0xFF202A39);
-        context.fill(x + 14, y + 41, x + panelWidth - 14, y + 64, CARD);
-        context.fill(x + 14, y + 66, x + panelWidth - 14, y + 93, INNER);
-        context.fill(x + 14, y + 105, x + panelWidth - 14, y + pageY - 5, INNER);
-
-        // The overridden renderBackground() prevents Screen.render() from
-        // invoking the blur a second time. It still draws all child widgets.
-        super.render(context, mouseX, mouseY, delta);
-
-        context.drawTextWithShadow(textRenderer, Text.literal("TOASTTPA"), x + 18, y + 10, ACCENT);
-        context.drawTextWithShadow(textRenderer, Text.literal("FRIENDS  /  QUICK TPA"),
-                x + 18, y + 24, TEXT);
-
-        String selected = ToastTpaConfig.getSelectedFriend();
-        String selectedLabel = selected == null || selected.isBlank() ? "Kein Freund ausgewählt" : selected;
-        context.drawTextWithShadow(textRenderer, Text.literal("QUICK TARGET: " + selectedLabel),
-                x + 22, y + 49, TEXT);
-        context.drawTextWithShadow(textRenderer, Text.literal("Ä = TPA"),
-                x + panelWidth - 88, y + 49, ACCENT);
-
-        context.drawTextWithShadow(textRenderer, Text.literal("FREUND HINZUFÜGEN"),
-                x + 18, y + 57, MUTED);
-        context.drawTextWithShadow(textRenderer, Text.literal("DEINE FREUNDE"),
-                x + 18, y + 96, ACCENT);
+        context.fill(x - 1, y - 1, right + 1, bottom + 1, 0xAFFF913D);
+        context.fill(x, y, right, bottom, PANEL);
+        context.fill(x + 1, y + 1, right - 1, y + 37, HEADER);
+        context.fill(x + 14, y + 40, right - 14, y + 68, SURFACE);
+        context.fill(x + 14, y + 70, right - 14, y + 98, SURFACE);
+        context.fill(x + 14, y + 105, right - 14, y + footerY - 5, SURFACE);
 
         List<String> friends = ToastTpaConfig.getFriends();
+        String selected = ToastTpaConfig.getSelectedFriend();
+        int start = page * visibleRows;
+        int end = Math.min(start + visibleRows, friends.size());
+
+        for (int index = start; index < end; index++) {
+            String friend = friends.get(index);
+            int rowY = y + rowsTop + (index - start) * (ROW_HEIGHT + ROW_GAP);
+            boolean active = friend.equalsIgnoreCase(selected);
+            context.fill(x + 18, rowY, right - 18, rowY + ROW_HEIGHT,
+                    active ? ROW_ACTIVE : ROW);
+            context.fill(x + 18, rowY, x + 21, rowY + ROW_HEIGHT,
+                    active ? ACCENT : 0xFF354457);
+        }
+
+        super.render(context, mouseX, mouseY, delta);
+
+        context.drawTextWithShadow(textRenderer, Text.literal("TOASTTPA"), x + 18, y + 9, ACCENT);
+        context.drawTextWithShadow(textRenderer, Text.translatable("toasttpa.subtitle"),
+                x + 18, y + 23, MUTED);
+
+        String target = selected == null || selected.isBlank()
+                ? textRenderer.trimToWidth(Text.translatable("toasttpa.no_target"), 150).getString()
+                : selected;
+        context.drawTextWithShadow(textRenderer, Text.translatable("toasttpa.target"),
+                x + 22, y + 47, MUTED);
+        context.drawTextWithShadow(textRenderer, Text.literal(target),
+                x + 22, y + 57, TEXT);
+
+        context.drawTextWithShadow(textRenderer, Text.translatable("toasttpa.add_section"),
+                x + 18, y + 61, MUTED);
+        context.drawTextWithShadow(textRenderer, Text.translatable("toasttpa.friends"),
+                x + 18, y + 100, ACCENT);
+
         if (friends.isEmpty()) {
             context.drawCenteredTextWithShadow(textRenderer,
-                    Text.literal("Noch keine Freunde gespeichert."),
+                    Text.translatable("toasttpa.empty"),
                     x + panelWidth / 2, y + rowsTop + 8, MUTED);
         } else {
-            int start = page * visibleRows;
-            int end = Math.min(start + visibleRows, friends.size());
             for (int index = start; index < end; index++) {
                 String friend = friends.get(index);
                 int rowY = y + rowsTop + (index - start) * (ROW_HEIGHT + ROW_GAP);
-                boolean isSelected = friend.equalsIgnoreCase(selected);
-                context.fill(x + 18, rowY, x + panelWidth - 232, rowY + 20,
-                        isSelected ? 0xFF293C43 : CARD);
-                context.fill(x + 18, rowY, x + 21, rowY + 20,
-                        isSelected ? ACCENT : 0xFF354457);
                 context.drawTextWithShadow(textRenderer, Text.literal(friend),
-                        x + 28, rowY + 6, TEXT);
+                        x + 29, rowY + 7, TEXT);
             }
         }
 
         context.drawTextWithShadow(textRenderer,
-                Text.literal("Seite " + (page + 1) + " / " + (maxPage() + 1)
-                        + "  •  " + friends.size() + "/" + ToastTpaConfig.MAX_FRIENDS),
-                x + 88, y + pageY + 6, MUTED);
-
+                Text.translatable("toasttpa.page", page + 1, maxPage() + 1),
+                x + 86, y + footerY + 6, MUTED);
         context.drawTextWithShadow(textRenderer,
-                Text.literal("RECHTS-SHIFT = MENÜ   •   Ä = SCHNELL-TPA"),
-                x + 18, y + panelHeight - 14, MUTED);
+                Text.translatable("toasttpa.hotkeys"),
+                x + 18, bottom - 11, MUTED);
     }
 }
