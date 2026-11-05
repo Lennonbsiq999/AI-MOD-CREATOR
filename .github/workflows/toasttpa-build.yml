@@ -2,12 +2,13 @@ name: ToastTPA 1.21.11 build
 
 on:
   push:
-    branches:
-      - build/toasttpa-1.21.11
     paths:
       - "toasttpa/**"
       - ".github/workflows/toasttpa-build.yml"
-  workflow_dispatch:
+  pull_request:
+    paths:
+      - "toasttpa/**"
+      - ".github/workflows/toasttpa-build.yml"
 
 permissions:
   contents: read
