@@ -8,6 +8,9 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.Identifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -20,6 +23,8 @@ import net.minecraft.world.phys.Vec3;
 import org.lwjgl.glfw.GLFW;
 
 public final class AutoFarmClient implements ClientModInitializer {
+    private static final Logger LOGGER = LoggerFactory.getLogger("Toast AutoFarm");
+    private static KeyMapping.Category CATEGORY;
     private static KeyMapping openMenuKey;
     private static KeyMapping toggleKey;
 
@@ -35,20 +40,26 @@ public final class AutoFarmClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        CATEGORY = KeyMapping.Category.register(
+                Identifier.fromNamespaceAndPath("toastautofarm", "controls")
+        );
+        LOGGER.info("Toast AutoFarm initialized. Registering O and P key mappings.");
+
         openMenuKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key.toastautofarm.open",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_O,
-                KeyMapping.Category.MISC
+                CATEGORY
         ));
         toggleKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key.toastautofarm.toggle",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_P,
-                KeyMapping.Category.MISC
+                CATEGORY
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(AutoFarmClient::onClientTick);
+        LOGGER.info("Toast AutoFarm key mappings registered successfully.");
     }
 
     private static void onClientTick(Minecraft client) {
