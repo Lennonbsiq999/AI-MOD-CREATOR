@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
@@ -60,7 +61,7 @@ public final class AutoFarmScreen extends Screen {
         renderBackground(graphics, mouseX, mouseY, delta);
         graphics.drawCenteredString(this.font, this.title, this.width / 2, this.height / 2 - 88, 0xFFFFFF);
         graphics.drawCenteredString(this.font,
-                Component.literal("Block: " + AutoFarmClient.getSelectedBlock().builtInRegistryHolder().key().location()),
+                Component.literal("Block: " + BuiltInRegistries.BLOCK.getKey(AutoFarmClient.getSelectedBlock())),
                 this.width / 2, this.height / 2 - 76, 0xA0FFA0);
         graphics.drawCenteredString(this.font,
                 Component.literal("Status: " + (AutoFarmClient.isEnabled() ? "ACTIVE" : "OFF") + " | O = Menu | P = Start/Stop"),
