@@ -235,7 +235,7 @@ public final class ToastTpaScreen extends Screen {
                 int rowY = y + rowsTop + (index - start) * (ROW_HEIGHT + ROW_GAP);
                 int nameRight = right - 18 - 24 - 6 - 44 - 6 - 76 - 10;
                 int nameWidth = Math.max(30, nameRight - (x + 28));
-                Text displayName = textRenderer.trimToWidth(Text.literal(friend), nameWidth);
+                Text displayName = Text.literal(textRenderer.trimToWidth(friend, nameWidth));
                 context.drawTextWithShadow(textRenderer, displayName, x + 29, rowY + 6, TEXT);
             }
         }
