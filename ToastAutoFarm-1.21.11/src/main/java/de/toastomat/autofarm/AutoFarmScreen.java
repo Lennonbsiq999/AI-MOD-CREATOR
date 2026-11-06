@@ -7,7 +7,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 
 import java.util.ArrayList;
@@ -63,9 +62,8 @@ public final class AutoFarmScreen extends Screen {
 
         List<Block> filtered = new ArrayList<>();
         for (Block block : ALL_BLOCKS) {
-            ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
+            String key = BuiltInRegistries.BLOCK.getKey(block).toString().toLowerCase(Locale.ROOT);
             String name = block.getName().getString().toLowerCase(Locale.ROOT);
-            String key = id.toString().toLowerCase(Locale.ROOT);
             if (name.contains(searchText) || key.contains(searchText)) {
                 filtered.add(block);
             }
@@ -90,7 +88,6 @@ public final class AutoFarmScreen extends Screen {
 
         for (int index = start; index < end; index++) {
             Block block = filtered.get(index);
-            ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
             String label = block.getName().getString();
             if (label.length() > 23) {
                 label = label.substring(0, 20) + "...";
