@@ -1,4 +1,5 @@
 {
   "key.toastautofarm.open": "Open Toast AutoFarm menu",
-  "key.toastautofarm.toggle": "Toggle Toast AutoFarm"
+  "key.toastautofarm.toggle": "Start/stop farming",
+  "key.category.toastautofarm.controls": "Toast AutoFarm"
 }
