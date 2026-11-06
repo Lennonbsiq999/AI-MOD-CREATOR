@@ -3,14 +3,12 @@
   "id": "toasttpa",
   "version": "${version}",
   "name": "ToastTPA",
-  "description": "Friend list and instant TPA hotkey for Minecraft servers that support /tpa.",
+  "description": "A lightweight friend list with configurable quick-TPA controls for Minecraft servers that support /tpa.",
   "authors": ["Toastomat"],
   "license": "MIT",
   "environment": "client",
   "entrypoints": {
-    "client": [
-      "dev.toastomat.toasttpa.ToastTpaClient"
-    ]
+    "client": ["dev.toastomat.toasttpa.ToastTpaClient"]
   },
   "depends": {
     "fabricloader": ">=0.19.0",

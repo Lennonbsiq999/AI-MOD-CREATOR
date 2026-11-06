@@ -38,7 +38,7 @@ jobs:
       - name: Upload only the mod JAR
         uses: actions/upload-artifact@v4
         with:
-          name: ToastTPA-1.21.11-v1.0.2
-          path: toasttpa/build/libs/toasttpa-1.0.2.jar
+          name: ToastTPA-1.21.11-v1.0.3
+          path: toasttpa/build/libs/toasttpa-1.0.3.jar
           if-no-files-found: error
           retention-days: 7
