@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -24,6 +25,7 @@ public final class AutoFarmClient implements ClientModInitializer {
 
     private static Block selectedBlock = Blocks.DIAMOND_ORE;
     private static boolean enabled = false;
+    private static boolean autoTool = true;
     private static BlockPos currentTarget = null;
     private static BlockPos lastStartedTarget = null;
     private static int scanCooldown = 0;
@@ -76,6 +78,9 @@ public final class AutoFarmClient implements ClientModInitializer {
 
         aimAt(client, currentTarget);
         if (!currentTarget.equals(lastStartedTarget)) {
+            if (autoTool) {
+                selectBestHotbarTool(client, currentTarget);
+            }
             client.gameMode.startDestroyBlock(currentTarget, Direction.UP);
             lastStartedTarget = currentTarget;
         } else {
@@ -87,7 +92,7 @@ public final class AutoFarmClient implements ClientModInitializer {
     private static boolean isStillTarget(Minecraft client, BlockPos pos) {
         if (pos == null || client.level == null) return false;
         BlockState state = client.level.getBlockState(pos);
-        return state.is(selectedBlock);
+        return state.is(selectedBlock) && !state.isAir();
     }
 
     private static BlockPos findNearestVisibleBlock(Minecraft client) {
@@ -103,7 +108,11 @@ public final class AutoFarmClient implements ClientModInitializer {
                     Vec3 center = Vec3.atCenterOf(pos);
                     double distance = eye.distanceToSqr(center);
                     if (distance > MAX_DISTANCE_SQUARED || distance >= bestDistance) continue;
-                    if (!client.level.getBlockState(pos).is(selectedBlock)) continue;
+
+                    BlockState state = client.level.getBlockState(pos);
+                    if (!state.is(selectedBlock) || state.isAir() || state.getDestroySpeed(client.level, pos) < 0.0F) {
+                        continue;
+                    }
 
                     HitResult hit = client.level.clip(new ClipContext(
                             eye,
@@ -120,6 +129,28 @@ public final class AutoFarmClient implements ClientModInitializer {
             }
         }
         return best;
+    }
+
+    private static void selectBestHotbarTool(Minecraft client, BlockPos pos) {
+        BlockState state = client.level.getBlockState(pos);
+        int bestSlot = client.player.getInventory().getSelectedSlot();
+        boolean bestCorrectTool = false;
+        float bestSpeed = -1.0F;
+
+        for (int slot = 0; slot < 9; slot++) {
+            ItemStack stack = client.player.getInventory().getItem(slot);
+            float speed = stack.isEmpty() ? 1.0F : stack.getDestroySpeed(state);
+            boolean correctTool = !stack.isEmpty() && stack.isCorrectToolForDrops(state);
+
+            if ((correctTool && !bestCorrectTool)
+                    || (correctTool == bestCorrectTool && speed > bestSpeed)) {
+                bestSlot = slot;
+                bestCorrectTool = correctTool;
+                bestSpeed = speed;
+            }
+        }
+
+        client.player.getInventory().setSelectedSlot(bestSlot);
     }
 
     private static void aimAt(Minecraft client, BlockPos pos) {
@@ -140,6 +171,7 @@ public final class AutoFarmClient implements ClientModInitializer {
         selectedBlock = block;
         currentTarget = null;
         lastStartedTarget = null;
+        scanCooldown = 0;
     }
 
     public static Block getSelectedBlock() {
@@ -150,12 +182,21 @@ public final class AutoFarmClient implements ClientModInitializer {
         return enabled;
     }
 
+    public static boolean isAutoToolEnabled() {
+        return autoTool;
+    }
+
+    public static void toggleAutoTool() {
+        autoTool = !autoTool;
+    }
+
     public static void toggle(Minecraft client) {
         enabled = !enabled;
-        if (!enabled) {
-            currentTarget = null;
-            lastStartedTarget = null;
-            if (client.gameMode != null) client.gameMode.stopDestroyBlock();
+        currentTarget = null;
+        lastStartedTarget = null;
+        scanCooldown = 0;
+        if (!enabled && client.gameMode != null) {
+            client.gameMode.stopDestroyBlock();
         }
     }
 }
