@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "toastautofarm",
+  "version": "${version}",
+  "name": "Toast AutoFarm",
+  "description": "Client-side target selector and experimental block-mining helper.",
+  "authors": ["Toastomat"],
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "de.toastomat.autofarm.AutoFarmClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.18.1",
+    "minecraft": "1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
