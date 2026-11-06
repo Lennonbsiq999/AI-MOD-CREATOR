@@ -4,7 +4,9 @@
   "version": "${version}",
   "name": "Toast AutoFarm",
   "description": "Client-side target selector and experimental block-mining helper.",
-  "authors": ["Toastomat"],
+  "authors": [
+    "Toastomat"
+  ],
   "environment": "client",
   "entrypoints": {
     "client": [
@@ -15,6 +17,8 @@
     "fabricloader": ">=0.18.1",
     "minecraft": "1.21.11",
     "java": ">=21",
-    "fabric-api": "*"
+    "fabric-api": "*",
+    "fabric-key-binding-api-v1": "*",
+    "fabric-lifecycle-events-v1": "*"
   }
 }
